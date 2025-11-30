@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Webbansach.Models.DonHang>
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Nếu là trang admin, dùng layout admin
+}
+
+<div class="container mt-4">
+    <h2 class="text-success border-bottom pb-2">📦 Danh sách Đơn đặt hàng</h2>
+
+    <table class="table table-bordered table-hover mt-3 shadow-sm">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>Mã Đơn</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Địa chỉ</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Tác vụ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>#@item.MaDonHang</td>
+                    <td>
+                        @(item.ApplicationUser != null ? item.ApplicationUser.HoTen : "Không rõ")
+                        <br />
+                        <small class="text-muted">
+                            @(item.ApplicationUser != null ? item.ApplicationUser.UserName : "")
+                        </small>
+                    </td>
+                    <td>
+                        @(item.NgayDat != null
+                            ? item.NgayDat.Value.ToString("dd/MM/yyyy HH:mm")
+                            : "")
+                    </td>
+                    <td>
+                        @item.DiaChiNhan
+                        <br />
+                        <small>SĐT: @item.SdtNhan</small>
+                    </td>
+                    <td class="text-danger fw-bold">
+                        @(item.TongTien != null
+                            ? item.TongTien.Value.ToString("N0") + ",000"
+                        : "0") đ
+                    </td>
+                    <td>
+                        @if (item.TrangThai == "Đã giao")
+                        {
+                            <span class="badge bg-success">@item.TrangThai</span>
+                        }
+                        else if (item.TrangThai == "Đã hủy")
+                        {
+                            <span class="badge bg-danger">@item.TrangThai</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">@item.TrangThai</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Details", "DonHangs", new { id = item.MaDonHang })" class="btn btn-sm btn-info text-white">
+                            Xem chi tiết
+                        </a>
+                        <a href="@Url.Action("Edit", "DonHangs", new { id = item.MaDonHang })" class="btn btn-sm btn-warning">
+                            Sửa
+                        </a>
+                        <a href="@Url.Action("Delete", "DonHangs", new { id = item.MaDonHang })" class="btn btn-sm btn-warning">
+                            xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

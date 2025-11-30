@@ -1,0 +1,84 @@
+﻿@model Webbansach.Models.DonHang
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    var chiTietDonHang = ViewBag.ChiTietDonHang as List<Webbansach.Models.ChiTietDonHang>;
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h4>Chi tiết đơn hàng #@Model.MaDonHang</h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Thông tin khách hàng:</h5>
+                    <p><strong>Họ tên:</strong> @(Model.ApplicationUser != null ? Model.ApplicationUser.HoTen : "")</p>
+                    <p><strong>Số điện thoại:</strong> @Model.SdtNhan</p>
+                    <p><strong>Địa chỉ giao:</strong> @Model.DiaChiNhan</p>
+                    <p><strong>Ngày đặt:</strong> @(Model.NgayDat != null ? Model.NgayDat.Value.ToString("dd/MM/yyyy HH:mm") : "")</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    @if (!string.IsNullOrEmpty(Model.StudentId))
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Đơn hàng sinh viên (Đã giảm 20%)</strong><br />
+                            MSSV: @Model.StudentId - Trường: @Model.University
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <h5>Sản phẩm đã đặt:</h5>
+            <table class="table table-striped border">
+                <thead>
+                    <tr>
+                        <th>Sách</th>
+                        <th>Hình ảnh</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (chiTietDonHang != null)
+                    {
+                        foreach (var item in chiTietDonHang)
+                        {
+                            <tr>
+                                <td>@item.Sach.TenSach</td>
+                                <td>
+                                    <img src="@Url.Content(item.Sach.HinhAnh ?? "~/Content/images/no-image.png")"
+                                         style="width:50px; height:70px; object-fit:cover;" />
+                                </td>
+                                <td>@item.SoLuong</td>
+                                <td> @((item.DonGia * 1000).ToString("N0")) đ</td>
+
+
+                                <td>@((item.DonGia * item.SoLuong).ToString("N0")+",000") đ</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="5">Không có dữ liệu sản phẩm.</td></tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-right font-weight-bold">TỔNG THANH TOÁN:</td>
+                        <td class="text-danger font-weight-bold" style="font-size: 1.2rem;">
+                            @(Model.TongTien != null ? Model.TongTien.Value.ToString("N0") + ",000"
+                            : "0") đ
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="text-center mt-3">
+                <a href="@Url.Action("MyOrders", "DonHangs")" class="btn btn-secondary">Quay lại danh sách</a>
+                <button class="btn btn-primary" onclick="alert('Chức năng in hóa đơn đang phát triển!')">In hóa đơn</button>
+            </div>
+        </div>
+    </div>
+</div>

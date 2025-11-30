@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "ListUsers";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@model IEnumerable<Webbansach.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Danh sách người dùng";
+}
+<style>
+    h2 {
+        margin-top: 30px; /* Cách lề trên */
+        margin-left: 25px; /* Cách lề trái */
+        margin-bottom: 20px; /* Khoảng cách giữa tiêu đề và bảng */
+        font-weight: bold; /* Làm đậm chữ cho đẹp hơn (tùy chọn) */
+        color: #4e73df; /* Đổi màu xanh cho giống admin (tùy chọn) */
+    }
+
+    /* 2. Đẩy bảng sang phải và co lại để không bị tràn màn hình */
+    .table {
+        margin-left: 25px; /* Cách lề trái giống tiêu đề */
+        width: calc(100% - 50px); /* Cực kỳ quan trọng: Tính toán chiều rộng = 100% trừ đi (lề trái + lề phải) */
+        background-color: white; /* Thêm nền trắng cho bảng nổi bật */
+        box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Thêm bóng mờ nhẹ cho đẹp */
+    }
+</style>
+
+<h2>@ViewBag.Title</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Địa chỉ</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Email</td>
+                <td>@item.HoTen</td>
+                <td>@item.DiaChi</td>
+                <td>
+                    @Html.ActionLink("Sửa", "EditUser", new { id = item.Id }) |
+                    @Html.ActionLink("Xóa", "DeleteUser", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

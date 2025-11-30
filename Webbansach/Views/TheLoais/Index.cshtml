@@ -1,0 +1,71 @@
+﻿@model Webbansach.Models.TheLoaiSachViewModel
+
+@{
+    ViewBag.Title = "Kho sách";
+}
+
+<div class="container pt-4">
+    <div class="row">
+        <!-- Sidebar thể loại: Trái -->
+        <div class="col-md-3">
+            <div class="list-group text-dark">
+                @foreach (var loai in Model.TheLoais)
+                {
+                    <a href="@Url.Action("Index", "TheLoais", new { theLoaiId = loai.MaTheLoai })"
+                       class="text-dark list-group-item @(ViewBag.CurrentTheLoai == loai.MaTheLoai ? "active" : "")">
+                        @loai.TenTheLoai
+                    </a>
+                }
+            </div>
+        </div>
+        <!-- Sách: Phải -->
+        <div class="col-md-9">
+            <div class="row justify-content-center">
+                @if (Model.Sachs != null && Model.Sachs.Any())
+                {
+                    foreach (var item in Model.Sachs)
+                    {
+                        // Xử lý đường dẫn ảnh
+                        string hinhAnhHienThi = item.HinhAnh;
+                        if (string.IsNullOrEmpty(hinhAnhHienThi))
+                        {
+                            hinhAnhHienThi = "~/Content/images/no-image.png";
+                        }
+                        <div class="col-md-4 col-sm-6 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="p-3 bg-white d-flex align-items-center justify-content-center" style="height:240px; border-radius:14px;">
+                                    <img src="@Url.Content(hinhAnhHienThi)"
+                                         alt="@item.TenSach"
+                                         style="max-width: 95%; max-height: 180px; object-fit: contain; border-radius: 10px; box-shadow:0 2px 8px rgba(60,60,100,0.13);"
+                                         onerror="this.src='/Content/images/no-image.png';" />
+                                </div>
+                                <div class="card-body text-center">
+                                    <h6 class="card-title fw-bold">@item.TenSach</h6>
+                                    <p class="text-danger fw-bold mb-0">@((item.GiaBan * 1000).ToString("N0")) ₫</p>
+                                </div>
+                                <div class="card-footer text-center border-0">
+                                    <a href="@Url.Action("Details", "Saches", new { id = item.MaSach })"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Xem chi tiết
+                                    </a>
+                                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                                    {
+                                        @Html.ActionLink("Sửa", "Edit", new { id = item.MaSach }, new { @class = "btn btn-sm btn-warning me-1 ms-2" })
+                                        @Html.ActionLink("Xóa", "Delete", new { id = item.MaSach }, new { @class = "btn btn-sm btn-danger ms-1" })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center mt-4">
+                        Không có sản phẩm nào được tìm thấy.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

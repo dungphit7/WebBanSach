@@ -1,0 +1,96 @@
+﻿@model IEnumerable<Webbansach.Models.Sach>
+
+
+
+@{
+    ViewBag.Title = "Index";
+
+}
+
+
+
+<div class="row justify-content-center">
+    @foreach (var item in Model)
+    {
+        /* --- BƯỚC 1: Xử lý đường dẫn ảnh trước khi hiển thị --- */
+        string hinhAnhHienThi = item.HinhAnh; // Lấy giá trị từ model
+
+        // Kiểm tra: Nếu null hoặc rỗng thì gán đường dẫn ảnh mặc định
+        if (string.IsNullOrEmpty(hinhAnhHienThi))
+        {
+            // Đảm bảo bạn có file no-image.jpg trong thư mục Images hoặc thay bằng đường dẫn phù hợp
+            hinhAnhHienThi = "~/Content/images/no-image.png";
+        }
+
+        /* --- BƯỚC 2: Hiển thị HTML --- */
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="p-3 bg-white d-flex align-items-center justify-content-center" style="height:240px; border-radius:14px;">
+                    <img src="@Url.Content(hinhAnhHienThi)"
+                         alt="@item.TenSach"
+                         style="max-width: 95%; max-height: 180px; object-fit: contain; border-radius: 10px; box-shadow:0 2px 8px rgba(60,60,100,0.13);"
+                         onerror="this.src='/Content/images/no-image.png';" />
+                </div>
+
+                <div class="card-body text-center">
+                    <h6 class="card-title fw-bold">@item.TenSach</h6>
+                    <p class="text-danger fw-bold mb-0">@((item.GiaBan * 1000).ToString("N0")) ₫</p>
+                </div>
+
+                <div class="card-footer text-center border-0">
+                    <a href="@Url.Action("Details", "Saches", new { id = item.MaSach })"
+                       class="btn btn-sm btn-outline-primary">
+                        Xem chi tiết
+                    </a>
+                    @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Sửa", "Edit", new { id = item.MaSach }, new { @class = "btn btn-sm btn-warning me-1 ms-2" })
+                        @Html.ActionLink("Xóa", "Delete", new { id = item.MaSach }, new { @class = "btn btn-sm btn-danger ms-1" })
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+</div>
+
+
+
+
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center mt-4">
+        Không có sản phẩm nào được tìm thấy.
+    </div>
+}
+
+
+<!-- Tùy chọn CSS bổ sung để căn chỉnh đẹp hơn -->
+<style>
+    .card {
+        border-radius: 10px;
+        transition: all 0.25s ease-in-out;
+    }
+
+        .card img {
+            transition: box-shadow 0.3s, transform 0.3s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.09);
+        }
+
+        .card:hover img {
+            box-shadow: 0 8px 16px rgba(60,60,100,0.17);
+            transform: scale(1.04) rotate(-1deg);
+            z-index: 1;
+        }
+
+
+        .card:hover img {
+            transform: scale(1.03);
+        }
+</style>
+

@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Nhà sách Online</title>
+    @*@Styles.Render("~/Content/css")
+        @Styles.Render("~/Content/bootstrap5/css/bootstrap.min.css")*@
+    <link rel="stylesheet" href="~/Content/bootstap5/css/bootstrap.min (2).css" asp-append-version="true" />
+    <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/Home/Index">Nhà sách online</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <!-- Menu trái -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/Home/Index">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Saches/Index">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/TheLoais/Index">Thể Loại</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Home/About">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Home/Contact">Liên hệ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Admin/Index">Admin</a></li>
+                </ul>
+
+                <!-- Tìm kiếm + giỏ hàng + đơn hàng + user -->
+                <form class="d-flex align-items-center me-3" role="search" onsubmit="searchProduct(); return false;">
+                    <input class="form-control me-2" type="search" placeholder="Tìm sản phẩm" aria-label="Search" id="searchInput">
+                    <button class="btn btn-outline-light" type="button" onclick="searchProduct()">Tìm kiếm</button>
+                </form>
+
+                <div class="d-flex align-items-center me-3">
+                    <a class="nav-link text-light" href="@Url.Action("Index","Cart")">
+                        <span id="cart-count">@ViewBag.CartCount</span>
+                        <i class="bi bi-cart fs-3"></i>
+                    </a>
+                    <a class="nav-link text-light" href="@Url.Action("MyOrders", "DonHangs")">
+                        Đơn hàng của tôi
+                    </a>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="text-center">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Trước</a>
+                </li>
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                    </li>
+                }
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    }
+
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <!-- FOOTER -->
+        <footer class="footer text-white bg-primary mt-4 w-100">
+
+            <div class="container-fluid py-4">
+                <div class="row g-4">
+                    <div class="col-md-3">
+
+                        <h5 p class="text-warning"><strong>Nhà sách Online</strong></h5>
+                        <p>Mua và đọc sách online. Cam kết giao hàng toàn quốc, sách mới 100%.</p>
+                        @*<p class="m-0"> Liên hệ</p>
+                            <p class="m-0"><i class="fa-solid fa-phone me-2"></i>0838789215</p>
+                            <p class="m-0"><i class="fa-solid fa-envelope me-2"></i>Nhasachonline@shop.com</p>*@
+                    </div>
+                    <div class="text-md-start col-md-3">
+                        <h5 p class="text-warning"><strong>Giới thiệu</strong></h5>
+                        <ul class="text-md-start list-unstyled m-0 ">
+                            <li><a class=" text-light" href='@Url.Action("About","Home" )'>Về nhà sách</a></li>
+                            <li><a class=" text-light" href='@Url.Action("About","Home" )'>Tin tức</a></li>
+
+
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+
+                        <h5 p class="text-warning"><strong>Chính sách</strong></h5>
+                        <ul class="list-unstyled m-0">
+                            <li><a class=" text-light" href="@Url.Action("Chinhsachbaomat","Home")">Chính sách bảo mật</a></li>
+                            <li><a class=" text-light" href="@Url.Action("Chinhsachdoitra","Home")">Chính sách đổi trả/hoàn tiền</a></li>
+                            <li><a class=" text-light" href="@Url.Action("Chinhsachthanhtoan","Home")">Chính sách thanh toán/ vận chuyển</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+
+                        <h5 p class="text-warning"><strong>Liên hệ</strong></h5>
+                        <ul class="list-unstyled m-0">
+                            <li><a class=" text-light">Điện thoại:0838789215</a></li>
+                            <li><a class=" text-light">Email:Nhasachonline@shop.com</a></li>
+                        </ul>
+                    </div>
+
+
+                </div>
+                <hr class="border-secondary my-4" />
+                <div class="d-flex justify-content-between small">
+                    <span>© @DateTime.Now.Year - Nhà sách online</span>
+                    <div class="d-flex gap-3">
+                        <a href="@Url.Action("About","Home")" class="text-white-50 text-decoration-none">Giới thiệu</a>
+                        <a href="@Url.Action("Contact","Home")" class="text-white-50 text-decoration-none">Liên hệ</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+

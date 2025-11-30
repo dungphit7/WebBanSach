@@ -1,0 +1,116 @@
+﻿@model List<Webbansach.Models.CartItem>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Giỏ hàng";
+    decimal total = ViewBag.Total ?? 0;
+}
+
+<div class="container mt-4">
+    <h2>Giỏ hàng</h2>
+    @if (!Model.Any())
+    {
+        <p>Giỏ hàng trống. <a href="@Url.Action("Index", "Home")">Mua hàng ngay</a></p>
+    }
+    else
+    {
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sách</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@Url.Content(item.HinhAnh)" alt="@item.TenSach"
+                                 style="max-width: 95%; max-height: 180px; object-fit: contain; border-radius: 10px; box-shadow:0 2px 8px rgba(60,60,100,0.13);" />
+                        </td>
+                        <td>@item.TenSach</td>
+                        <td>@((item.GiaBan * 1000).ToString("N0")) ₫</td>
+                        <td>
+                            <form action="@Url.Action("UpdateQuantity", "Cart")" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@item.MaSach" />
+                                <div style="display:flex; align-items:center; justify-content:center;">
+                                    <button type="button" onclick="minus(@item.MaSach)">-</button>
+                                    <input type="number" name="quantity" id="qty-@item.MaSach" value="@item.SoLuong" min="1"
+                                           style="width:60px; text-align:center;" />
+                                    <button type="button" onclick="plus(@item.MaSach)">+</button>
+                                    <button type="submit" id="update-btn-@item.MaSach" style="display:none"></button>
+                                </div>
+                            </form>
+                        </td>
+
+
+                        <td>
+                            <span id="total-@item.MaSach">@((item.ThanhTien*1000).ToString("N0")) đ</span>
+                        </td>
+
+                        <td>
+                            <a href="@Url.Action("Remove", "Cart", new { id = item.MaSach })"
+                               class="btn btn-sm btn-danger">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+        <script>
+    // Lưu giá bán
+    var prices = {};
+    @foreach (var item in Model) {
+        <text> prices[@item.MaSach] = @item.GiaBan; </text>
+    }
+
+    function updateQuantity(maSach, delta) {
+        var qtyInput = document.getElementById('qty-' + maSach);
+        var qty = parseInt(qtyInput.value, 10) + delta;
+        if (qty < 1) qty = 1;
+        qtyInput.value = qty;
+
+        var totalSpan = document.getElementById('total-' + maSach);
+        var total = prices[maSach] * qty;
+        totalSpan.innerText = total.toLocaleString("vi-VN") + ",000đ";
+        updateGrandTotal();
+    }
+
+            function updateGrandTotal()
+            {
+                var grandTotal = 0;
+                @foreach (var item in Model)
+                {
+                   <text>
+                   var qty = parseInt(document.getElementById('qty-' + @item.MaSach).value, 10);
+                   grandTotal += prices[@item.MaSach] * qty;
+                   </text>
+                }
+                document.getElementById('grand-total').innerText = grandTotal.toLocaleString("vi-VN") + ",000đ";
+            }
+            function plus(id) {
+                var qtyInput = document.getElementById('qty-' + id);
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+                document.getElementById('update-btn-' + id).click();
+            }
+            function minus(id) {
+                var qtyInput = document.getElementById('qty-' + id);
+                qtyInput.value = Math.max(1, parseInt(qtyInput.value) - 1);
+                document.getElementById('update-btn-' + id).click();
+            }
+        </script>
+
+        <div class="text-end">
+            <h4>
+                Tổng cộng: <span id="grand-total" class="text-danger">@total.ToString("N0"),000đ</span>
+            </h4>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-success">Trở về</a>
+            <a href="@Url.Action("Checkout", "Cart")" class="btn btn-success">Đặt hàng</a>
+        </div>
+
+    }
+</div>

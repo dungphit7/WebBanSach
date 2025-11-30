@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Webbansach.Models.Sach>
+
+@{
+    ViewBag.Title = "Trang chủ";
+}
+
+<div class="jumbotron text-center bg-light py-4 mb-4">
+    <h1 class="display-4">Chào mừng đến với Nhà sách Online!</h1>
+    <p class="lead">Khám phá những tựa sách hay nhất được cập nhật mỗi ngày.</p>
+</div>
+
+<h2 class="text-center mt-3 mb-4 text-uppercase fw-bold text-primary">
+    @ViewBag.Message
+</h2>
+
+<div class="row justify-content-center">
+    @if (Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card shadow-sm border-0 h-100">
+
+                    <div class="p-3 bg-white d-flex align-items-center justify-content-center position-relative" style="height:240px; border-radius:14px;">
+
+                        @if (item.CreateAt.HasValue && item.CreateAt.Value.Date == DateTime.Today)
+                        {
+                            <div class="position-absolute top-0 end-0 m-2 badge bg-danger rounded-pill shadow-sm">
+                                Mới toanh
+                            </div>
+                        }
+
+                        <img src="@Url.Content(item.HinhAnh ?? "~/Content/images/no-image.png")"
+                             alt="@item.TenSach"
+                             style="max-width: 95%; max-height: 180px; object-fit: contain; border-radius: 10px;" />
+                    </div>
+
+                    <div class="card-body text-center">
+                        <h6 class="card-title fw-bold text-truncate" title="@item.TenSach">
+                            @item.TenSach
+                        </h6>
+                        <p class="text-danger fw-bold mb-0" style="font-size: 1.1rem;">
+                            @((item.GiaBan * 1000).ToString("N0")) ₫
+                        </p>
+                    </div>
+
+                    <div class="card-footer bg-white text-center border-0 pb-3">
+                        <a href="@Url.Action("Details", "Saches", new { id = item.MaSach })"
+                           class="btn btn-sm btn-outline-primary px-4 rounded-pill">
+                            Xem ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                Hiện tại chưa có sách mới nào được cập nhật.
+            </div>
+        </div>
+    }
+</div>
+
+<div class="text-center mt-4 mb-5">
+    <a href="@Url.Action("Index", "Saches")" class="btn btn-primary btn-lg rounded-pill px-5 shadow">
+        Xem kho sách đầy đủ <i class="fa fa-arrow-right ms-2"></i>
+    </a>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        }
+
+        .card img {
+            transition: transform 0.3s;
+        }
+
+        .card:hover img {
+            transform: scale(1.05);
+        }
+</style>

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Webbansach.Models.ChiTietDonHang>
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-success border-bottom pb-2">📝 Chi tiết đơn hàng</h2>
+
+    <table class="table table-bordered table-hover mt-3 shadow-sm">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>Sách</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+                <th>Trạng thái</th>
+                <th>Tác vụ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @(item.Sach != null ? item.Sach.TenSach : "Không rõ")
+                    </td>
+                    <td>@item.SoLuong</td>
+                    <td class="text-danger fw-bold">
+                        @((item.DonGia * 1000).ToString("N0")) đ
+                    </td>
+
+                    <td class="fw-bold">
+                        @((item.DonGia * item.SoLuong).ToString("N0")+",000") đ
+                    </td>
+                    <td>
+                        @if (item.DonHang != null)
+                        {
+                            if (item.DonHang.TrangThai == "Đã giao")
+                            {
+                                <span class="badge bg-success">@item.DonHang.TrangThai</span>
+                            }
+                            else if (item.DonHang.TrangThai == "Đã hủy")
+                            {
+                                <span class="badge bg-danger">@item.DonHang.TrangThai</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@item.DonHang.TrangThai</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">N/A</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Edit", "ChiTietDonHangs", new { id = item.MaCTDH })" class="btn btn-sm btn-warning">Sửa</a>
+                        <a href="@Url.Action("Delete", "ChiTietDonHangs", new { id = item.MaCTDH })" class="btn btn-sm btn-warning">xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
